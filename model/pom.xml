@@ -25,7 +25,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-mllib_2.13</artifactId>
             <version>3.5.5</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
