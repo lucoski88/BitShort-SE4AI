@@ -3,19 +3,32 @@ import modelserver.HttpHandlerImplML;
 import org.apache.spark.ml.regression.LinearRegressionModel;
 import org.apache.spark.sql.SparkSession;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+        if (args.length != 1) {
+            System.err.println("Missing arguments");
+            System.exit(1);
+        }
+
+        String modelPath = args[0];
+        if (new File(modelPath).exists()) {
+            System.err.println(modelPath + " not found");
+            System.exit(1);
+        }
+
         SparkSession session = SparkSession
                 .builder()
                 .appName("ModelServer")
                 .master("local")
                 .getOrCreate();
-        
-        LinearRegressionModel model = LinearRegressionModel.load("high_predictor_large_dataset");
+        String home = System.getProperty("user.home");
+
+        LinearRegressionModel model = LinearRegressionModel.load(modelPath);
         
         InetSocketAddress addr = new InetSocketAddress(6666);
         HttpServer server = HttpServer.create(addr, 128);

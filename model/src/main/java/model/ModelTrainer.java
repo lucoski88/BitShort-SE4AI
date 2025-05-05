@@ -7,8 +7,20 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
+import java.io.File;
+
 public class ModelTrainer {
     public static void main(String[] args) throws Exception {
+        if (args.length != 1) {
+            System.err.println("Missing arguments");
+            System.exit(1);
+        }
+        String datasetName = args[0];
+        if (new File(datasetName).exists()) {
+            System.err.println(datasetName + " not found");
+            System.exit(1);
+        }
+
         SparkSession session = SparkSession
                 .builder()
                 .appName("ModelCreator")
@@ -18,7 +30,7 @@ public class ModelTrainer {
         Dataset<Row> data = session.read().format("csv")
                 .option("header", true)
                 .option("inferSchema", true)
-                .load("13,51cleaned.csv");
+                .load(datasetName);
         Dataset<Row> selectedData = data;
 
         selectedData.show(10);
