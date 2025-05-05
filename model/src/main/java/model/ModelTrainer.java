@@ -16,7 +16,7 @@ public class ModelTrainer {
             System.exit(1);
         }
         String datasetName = args[0];
-        if (new File(datasetName).exists()) {
+        if (!new File(datasetName).exists()) {
             System.err.println(datasetName + " not found");
             System.exit(1);
         }
