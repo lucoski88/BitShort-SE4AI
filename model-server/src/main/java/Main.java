@@ -26,7 +26,6 @@ public class Main {
                 .appName("ModelServer")
                 .master("local")
                 .getOrCreate();
-        String home = System.getProperty("user.home");
 
         LinearRegressionModel model = LinearRegressionModel.load(modelPath);
         
