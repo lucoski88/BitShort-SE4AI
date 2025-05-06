@@ -2,8 +2,20 @@ package modelserver;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.apache.spark.ml.feature.MinMaxScaler;
+import org.apache.spark.ml.feature.MinMaxScalerModel;
 import org.apache.spark.ml.linalg.DenseVector;
+import org.apache.spark.ml.linalg.Vector;
+import org.apache.spark.ml.linalg.VectorUDT;
+import org.apache.spark.ml.linalg.Vectors;
 import org.apache.spark.ml.regression.LinearRegressionModel;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.RowFactory;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.Metadata;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -11,14 +23,15 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class HttpHandlerImplML implements HttpHandler {
     private LinearRegressionModel model;
+    private MinMaxScalerModel scalerModel;
     
-    public HttpHandlerImplML(LinearRegressionModel model) {
+    public HttpHandlerImplML(LinearRegressionModel model, MinMaxScalerModel scalerModel) {
         this.model = model;
+        this.scalerModel = scalerModel;
     }
     
     @Override
@@ -56,7 +69,20 @@ public class HttpHandlerImplML implements HttpHandler {
                         (double) parametersMap.get("close2"),
                         (double) parametersMap.get("close1")
                 };
-                double prediction = model.predict(new DenseVector(params));
+                SparkSession spark = SparkSession
+                        .builder()
+                        .appName("ModelCreator")
+                        .master("local")
+                        .getOrCreate();
+                DenseVector vector = new DenseVector(params);
+                StructType schema = new StructType(new StructField[]{
+                        new StructField("features", new VectorUDT(), false, Metadata.empty())
+                });
+                Row row = RowFactory.create((Vector) vector);
+                Dataset<Row> inputDF = spark.createDataFrame(Collections.singletonList(row), schema);
+                Dataset<Row> scaledDF = scalerModel.transform(inputDF);
+                Vector scaledVector = scaledDF.select("scaledFeatures").first().getAs(0);
+                double prediction = model.predict(scaledVector);
                 double truncatedPrediction = BigDecimal.valueOf(prediction)
                                 .setScale(2, RoundingMode.DOWN).doubleValue();
                 System.out.println(prediction);
