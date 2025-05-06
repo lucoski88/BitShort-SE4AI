@@ -34,7 +34,7 @@ jobs:
       run: mvn clean install -pl model -am
 
     - name: Train Model
-      run: java -cp module/target/classes model.LinearRegressionTrainer
+      run: mvn exec:java -Dexec.mainClass="model.LinearRegressionTrainer"
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
