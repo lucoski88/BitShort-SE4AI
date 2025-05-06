@@ -84,11 +84,18 @@ public class DataProducer extends Thread {
                 }
             }
             List<KLine> obtainedData = dataObtainer.getData();
-            KLine prevMin = obtainedData.get(0);
-            KLine actualMin = obtainedData.get(1);
+            KLine prevMin5 = obtainedData.get(0);
+            KLine prevMin4 = obtainedData.get(1);
+            KLine prevMin3 = obtainedData.get(2);
+            KLine prevMin2 = obtainedData.get(3);
+            KLine prevMin1 = obtainedData.get(4);
+            KLine actualMin = obtainedData.get(5);
             
-            String request = "open=" + prevMin.getOpen() + "&high=" + prevMin.getHigh() + "&low=" + prevMin.getLow() +
-                    "&close=" + prevMin.getClose() + "&actualOpen=" + actualMin.getOpen();
+            String request = "close5=" + prevMin5.getClose() +
+                    "&" + "close4=" + prevMin4.getClose() +
+                    "&" + "close3=" + prevMin3.getClose() +
+                    "&" + "close2=" + prevMin2.getClose() +
+                    "&" + "close1=" + prevMin1.getClose();
             URL url = null;
             HttpURLConnection conn = null;
                     try{

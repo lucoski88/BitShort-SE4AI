@@ -43,16 +43,19 @@ public class HttpHandlerImplML implements HttpHandler {
         Map<String, Object> parametersMap = parser.getParameters();
         System.out.println(parametersMap);
         if (parametersMap.size() == 5) {
-            if(parametersMap.containsKey("open") && parametersMap.containsKey("high") &&
-                parametersMap.containsKey("low") && parametersMap.containsKey("close") &&
-                    parametersMap.containsKey("actualOpen")) {
+            if(parametersMap.containsKey("close5") && parametersMap.containsKey("close4") &&
+                parametersMap.containsKey("close3") && parametersMap.containsKey("close2") &&
+                    parametersMap.containsKey("close1")) {
                 /*double[] params = new double[]{(double) parametersMap.get("open"),
                     (double) parametersMap.get("low"),
                     (double) parametersMap.get("actualOpen")};*/
-                double[] params = new double[]{(double) parametersMap.get("actualOpen"),
-                        (double) parametersMap.get("open"),
-                        (double) parametersMap.get("high"),
-                        (double) parametersMap.get("low")};
+                double[] params = new double[]{
+                        (double) parametersMap.get("close5"),
+                        (double) parametersMap.get("close4"),
+                        (double) parametersMap.get("close3"),
+                        (double) parametersMap.get("close2"),
+                        (double) parametersMap.get("close1")
+                };
                 double prediction = model.predict(new DenseVector(params));
                 double truncatedPrediction = BigDecimal.valueOf(prediction)
                                 .setScale(2, RoundingMode.DOWN).doubleValue();

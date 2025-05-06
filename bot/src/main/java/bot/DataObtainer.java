@@ -35,7 +35,7 @@ public class DataObtainer {
             public void run() {
                 try {
                     do {
-                        retrievedData = common.getKLines(symbol, "1m", 2);
+                        retrievedData = common.getKLines(symbol, "1m", 6);
                     } while (retrievedData.get(1).getTimestamp() != calculateStartMinuteTimestamp());
                     synchronized (thisDataObtainer) {
                         thisDataObtainer.notify();
