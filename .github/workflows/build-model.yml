@@ -43,7 +43,8 @@ jobs:
            sudo apt install dvc
 
     - name: Create Key
-      run: ${{ secrets.GDRIVE_KEY }} > ./gdrive_key.json
+      run: printf '%s' ${{ secrets.GDRIVE_KEY }} > ./gdrive_key.json
+           cat ./gdrive_key.json
 
     - name: Dvc Pull
       run: dvc pull
