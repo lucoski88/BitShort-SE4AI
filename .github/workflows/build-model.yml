@@ -33,8 +33,17 @@ jobs:
     - name: Maven Build Model
       run: mvn clean install -pl model -am
 
-    - name: Dvc Download
-      run: sudo snap install dvc
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'  # or any supported version
+
+    - name: Install DVC
+      run: pip install dvc
+
+
+    - name: Dvc Extras
+      run: pip install 'dvc[gdrive]'
 
     - name: Create Key
       run: printf '%s' ${{ secrets.GDRIVE_KEY }} > ./gdrive_key.json
