@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
-            <version>3.3.1</version> <!-- Adjust version as needed -->
+            <version>3.4.1</version>
         </dependency>
     </dependencies>
 
@@ -39,7 +39,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.5.0</version>
                 <configuration>
                     <mainClass>model.LinearRegressionTrainer</mainClass>
                     <cleanupDaemonThreads>false</cleanupDaemonThreads>
