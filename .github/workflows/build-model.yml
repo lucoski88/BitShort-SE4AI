@@ -38,6 +38,13 @@ jobs:
       with:
         python-version: '3.10'  # or any supported version
 
+    - name: Set up Spark
+      run: |
+        wget https://downloads.apache.org/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz
+        tar -xzf spark-3.5.0-bin-hadoop3.tgz
+        export SPARK_HOME=$(pwd)/spark-3.5.0-bin-hadoop3
+        export PATH=$SPARK_HOME/bin:$PATH
+
     - name: Install DVC
       run: pip install dvc
 
