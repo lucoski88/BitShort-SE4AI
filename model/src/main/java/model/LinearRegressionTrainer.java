@@ -41,7 +41,7 @@ public class LinearRegressionTrainer {
                 .option("header", true)
                 .option("inferSchema", true)
                 .load(datasetName);
-        System.out.println("Creating the dataset");
+        System.out.println("Creating the dataset...");
         String[] features = new String[] {
                 "avgClose"
         };
