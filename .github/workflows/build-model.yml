@@ -51,7 +51,7 @@ jobs:
       run: dvc pull
 
     - name: Train Model
-      run: java -cp model/target/model-1.0-SNAPSHOT.jar model.LinearRegressionTrainer datasets/regression_avgClose-close.csv
+      run: mvn exec:java -Dexec.args="datasets/regression_avgClose-close.csv"
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
