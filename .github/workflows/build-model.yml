@@ -46,8 +46,8 @@ jobs:
       run: pip install 'dvc[gdrive]'
 
     - name: Create Key
-      run: printf '%s' ${{ secrets.GDRIVE_KEY }} > ./gdrive_key.json
-           & cat ./gdrive_key.json
+      run: printf '%s' "${{ secrets.GDRIVE_KEY }}" > gdrive_key.json
+           & cat gdrive_key.json
 
     - name: Dvc Pull
       run: dvc pull
