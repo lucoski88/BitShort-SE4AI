@@ -35,6 +35,9 @@ public class LinearRegressionTrainer {
                 .builder()
                 .appName("ModelCreator")
                 .master("local")
+                .config("spark.cleaner.referenceTracking.cleanCheckpoints", true)
+                .config("spark.driver.userClassPathFirst", true)
+                .config("spark.executor.userClassPathFirst", true)
                 .getOrCreate();
 
         Dataset<Row> data = session.read().format("csv")
