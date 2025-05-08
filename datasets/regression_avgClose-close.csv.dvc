@@ -1,0 +1,5 @@
+outs:
+- md5: 86e3b08bf90be3967fdf5bdc5afdeef0
+  size: 192491
+  hash: md5
+  path: regression_avgClose-close.csv
