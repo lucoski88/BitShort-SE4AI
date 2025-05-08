@@ -90,6 +90,7 @@ public class LinearRegressionTrainer {
         System.out.println("R2: " + r2);
         System.out.println(model.coefficients());
 
+        session.cloneSession();
         //model.save("C:/Users/lucad/Desktop/models/model");
         //scalerModel.save("C:/Users/lucad/Desktop/models/scaler");
     }
