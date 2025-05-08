@@ -33,8 +33,23 @@ jobs:
     - name: Maven Build Model
       run: mvn clean install -pl model -am
 
+    - name: Dvc Download
+      run: sudo apt install wget gpg
+           sudo mkdir -p /etc/apt/keyrings
+           wget -qO - https://dvc.org/deb/iterative.asc | sudo gpg --dearmor -o /etc/apt/keyrings/packages.iterative.gpg
+           echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.iterative.gpg] https://dvc.org/deb/ stable main" | sudo tee /etc/apt/sources.list.d/dvc.list
+           sudo chmod 644 /etc/apt/keyrings/packages.iterative.gpg /etc/apt/sources.list.d/dvc.list
+           sudo apt update
+           sudo apt install dvc
+
+    - name: Create Key
+      run: ${{ secrets.GDRIVE_KEY }} > ./gdrive_key.json
+
+    - name: Dvc Pull
+      run: dvc pull
+
     - name: Train Model
-      run: java -cp model/target/model-1.0-SNAPSHOT.jar model.LinearRegressionTrainer
+      run: java -cp model/target/model-1.0-SNAPSHOT.jar model.LinearRegressionTrainer datasets/regression_avgClose-close.csv
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph

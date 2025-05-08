@@ -42,21 +42,11 @@ public class LinearRegressionTrainer {
                 .option("inferSchema", true)
                 .load(datasetName);
 
-        String[] f = new String[5];
-        for (int i = 0; i < f.length; i++) {
-            f[i] = "c" + (i + 1);
-        }
-        /*String[] f = new String[15 * 2];
-        for (int i = 0, j = 0; i < f.length - 1; i += 2, j++) {
-            f[i] = "c" + (j + 1);
-            f[i + 1] = "o" + (j + 1);
-        }
-        String[] dio = new String[f.length + 1];
-        System.arraycopy(f, 0, dio, 0, f.length);
-        dio[dio.length - 1] = "pumpDump";
-        f = dio;*/
+        String[] features = new String[] {
+                "avgClose"
+        };
         VectorAssembler assembler = new VectorAssembler()
-                .setInputCols(f)
+                .setInputCols(features)
                 .setOutputCol("features");
         data = assembler.transform(data);
 
@@ -100,7 +90,7 @@ public class LinearRegressionTrainer {
         System.out.println("R2: " + r2);
         System.out.println(model.coefficients());
 
-        model.save("C:/Users/lucad/Desktop/models/model");
-        scalerModel.save("C:/Users/lucad/Desktop/models/scaler");
+        //model.save("C:/Users/lucad/Desktop/models/model");
+        //scalerModel.save("C:/Users/lucad/Desktop/models/scaler");
     }
 }
