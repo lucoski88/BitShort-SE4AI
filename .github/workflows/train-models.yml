@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Build Model
+name: Train Models
 
 on:
   push:
@@ -16,7 +16,7 @@ on:
       - '.github/workflows/train-models.yml'
 
 jobs:
-  build-model:
+  train-models:
 
     runs-on: ubuntu-latest
 
