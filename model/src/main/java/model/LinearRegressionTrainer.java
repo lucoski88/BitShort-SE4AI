@@ -101,6 +101,8 @@ public class LinearRegressionTrainer {
             System.out.println("Completed");
         }
 
+        System.exit(0);
+
         //model.save("C:/Users/lucad/Desktop/models/model");
         //scalerModel.save("C:/Users/lucad/Desktop/models/scaler");
     }
