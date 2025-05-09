@@ -12,10 +12,8 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'model/**'
-      - '.github/workflows/build-model.yml'
-  pull_request:
-    branches: [ "main" ]
+      - 'datasets/**'
+      - '.github/workflows/train-models.yml'
 
 jobs:
   build-model:
@@ -50,5 +48,8 @@ jobs:
     - name: Dvc Pull
       run: dvc pull
 
-    - name: Train Model
-      run: mvn exec:java -pl model -Dexec.args="datasets/regression_avgClose-close.csv"
+    - name: Train Linear Regression Model
+      run: mvn exec:java -pl model -Dexec.mainClass="model.LinearRegressionTrainer" -Dexec.args="datasets/regression_avgClose-close.csv"
+
+    - name: Train Random Forest Regressor Model
+      run: mvn exec:java -pl model -Dexec.mainClass="model.RandomForestRegressorTrainer" -Dexec.args="datasets/regression_avgClose-close.csv"
