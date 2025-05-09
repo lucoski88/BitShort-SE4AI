@@ -31,7 +31,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Maven Build Model
-      run: mvn clean package -pl model -am
+      run: mvn clean install -pl model -am
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -51,5 +51,4 @@ jobs:
       run: dvc pull
 
     - name: Train Model
-      run: java -jar model/target/model-1.0-SNAPSHOT.jar datasets/regression_avgClose-close.csv
-      #run: mvn exec:java -pl model -Dexec.args="datasets/regression_avgClose-close.csv" -Dexec.jvmArgs="-Dlog4j.shutdownHookEnabled=false"
+      run: mvn exec:java -pl model -Dexec.args="datasets/regression_avgClose-close.csv"
