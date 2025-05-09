@@ -51,4 +51,5 @@ jobs:
       run: dvc pull
 
     - name: Train Model
-      run: mvn exec:java -pl model -Dexec.args="datasets/regression_avgClose-close.csv" -Dexec.jvmArgs="-Dlog4j.shutdownHookEnabled=false"
+      run: java -jar model/target/model-1.0-SNAPSHOT-shaded.jar datasets/regression_avgClose-close.csv
+      #run: mvn exec:java -pl model -Dexec.args="datasets/regression_avgClose-close.csv" -Dexec.jvmArgs="-Dlog4j.shutdownHookEnabled=false"
