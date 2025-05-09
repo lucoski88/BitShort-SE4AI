@@ -31,7 +31,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Maven Build Model
-      run: mvn clean install -pl model -am
+      run: mvn clean package -pl model -am
 
     - name: Set up Python
       uses: actions/setup-python@v5
