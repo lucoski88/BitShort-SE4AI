@@ -51,4 +51,4 @@ jobs:
       run: dvc pull
 
     - name: Train Model
-      run: mvn exec:java -pl model -Dexec.args="datasets/regression_avgClose-close.csv"
+      run: mvn exec:java -pl model -Dexec.args="datasets/regression_avgClose-close.csv" -Dsbt.classloader.close=false
