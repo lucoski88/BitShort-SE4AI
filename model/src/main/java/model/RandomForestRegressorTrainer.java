@@ -5,10 +5,10 @@ import org.apache.spark.ml.PipelineModel;
 import org.apache.spark.ml.PipelineStage;
 import org.apache.spark.ml.evaluation.RegressionEvaluator;
 import org.apache.spark.ml.feature.MinMaxScaler;
+import org.apache.spark.ml.feature.MinMaxScalerModel;
 import org.apache.spark.ml.feature.VectorAssembler;
 import org.apache.spark.ml.param.ParamMap;
-import org.apache.spark.ml.regression.LinearRegression;
-import org.apache.spark.ml.regression.LinearRegressionModel;
+import org.apache.spark.ml.regression.*;
 import org.apache.spark.ml.tuning.CrossValidator;
 import org.apache.spark.ml.tuning.CrossValidatorModel;
 import org.apache.spark.ml.tuning.ParamGridBuilder;
@@ -19,7 +19,7 @@ import org.apache.spark.sql.types.StructType;
 
 import java.io.File;
 
-public class LinearRegressionTrainer {
+public class RandomForestRegressorTrainer {
     public static void main(String[] args) throws Exception {
         if (args.length != 1) {
             System.err.println("Missing arguments");
@@ -46,7 +46,7 @@ public class LinearRegressionTrainer {
         String[] features = new String[fieldNames.length - 1];
         System.arraycopy(fieldNames, 0, features, 0, features.length);
 
-        System.out.println("Starting Linear Regression training");
+        System.out.println("Starting Random Forest Regressor training");
         Dataset<Row>[] split = data.randomSplit(new double[] {0.7, 0.3});
         Dataset<Row> trainingSet = split[0];
         Dataset<Row> testSet = split[1];
@@ -59,17 +59,22 @@ public class LinearRegressionTrainer {
                 .setOutputCol("scaledFeatures")
                 .setMin(0.0)
                 .setMax(1.0);
-        LinearRegression regression = new LinearRegression();
+
+        RandomForestRegressor regression = new RandomForestRegressor();
         Pipeline pipeline = new Pipeline()
                 .setStages(new PipelineStage[]{featuresAssembler, featuresScaler, regression});
 
         ParamGridBuilder paramGridBuilder = new ParamGridBuilder();
         ParamMap[] paramGrid = paramGridBuilder
-                .addGrid(regression.regParam(), new double[] {0, 0.5, 0.9})
-                .addGrid(regression.elasticNetParam(), new double[] {0, 0.5, 0.9})
-                .addGrid(regression.maxIter(), new int[] {10, 25, 50, 100})
-                //.addGrid(regression.epsilon(), new double[] {0.5, 0.9})
-                .addGrid(regression.fitIntercept())
+                .addGrid(regression.numTrees(), new int[] {20, 10, 30})
+                .addGrid(regression.maxDepth(), new int[] {5, 2, 10})
+                .addGrid(regression.maxBins(), new int[] {32, 16, 64})
+                .addGrid(regression.minInstancesPerNode(), new int[] {1, 2, 3})
+                .addGrid(regression.minInfoGain(), new double[] {0.0})
+                .addGrid(regression.subsamplingRate(), new double[] {1.0})
+                //.addGrid(regression.featureSubsetStrategy(), new String[] {})
+                //.addGrid(regression.impurity(), new String[] {})
+                .addGrid(regression.bootstrap())
                 .build();
         RegressionEvaluator maeEvaluator = new RegressionEvaluator()
                 .setLabelCol("label")
@@ -93,6 +98,7 @@ public class LinearRegressionTrainer {
                 .setEstimatorParamMaps(paramGrid)
                 .setNumFolds(5)
                 .setParallelism(2);
+
         System.out.println("Fitting CrossValidator...");
         CrossValidatorModel cvModel = crossValidator.fit(trainingSet);
         System.out.println("CrossValidator fit completed");
@@ -108,22 +114,24 @@ public class LinearRegressionTrainer {
         System.out.println("\tMSE: " + mse + ", is larger better: " + mseEvaluator.isLargerBetter());
         System.out.println("\tRMSE: " + rmse + ", is larger better: " + rmseEvaluator.isLargerBetter());
         System.out.println("\tR2: " + r2 + ", is larger better: " + r2Evaluator.isLargerBetter());
-        System.out.println("Model Coefficients:");
-        LinearRegressionModel model = null;
+        RandomForestRegressionModel model = null;
         for (PipelineStage s : ((PipelineModel) cvModel.bestModel()).stages())  {
-            if (s instanceof LinearRegressionModel) {
-                model = (LinearRegressionModel) s;
+            if (s instanceof RandomForestRegressionModel) {
+                model = (RandomForestRegressionModel) s;
                 break;
             }
         }
-        System.out.println("\t" + model.coefficients());
         System.out.println("Best hyperparameters:");
-        System.out.println("\tRegParam: " + model.getRegParam());
-        System.out.println("\tElasticNetParam: " + model.getElasticNetParam());
-        System.out.println("\tMaxIter: " + model.getMaxIter());
-        System.out.println("\tEpsilon: " + model.getEpsilon());
-        System.out.println("\tLoss: " + model.getLoss());
-        System.out.println("\tFitIntercept: " + model.getFitIntercept());
+        System.out.println("\tNumTrees: " + model.getNumTrees());
+        System.out.println("\tMaxDepth: " + model.getMaxDepth());
+        System.out.println("\tMaxBins: " + model.getMaxBins());
+        System.out.println("\tMinInstancesPerNode: " + model.getMinInstancesPerNode());
+        System.out.println("\tMinInfoGain: " + model.getMinInfoGain());
+        System.out.println("\tSubSamplingRate: " + model.getSubsamplingRate());
+        System.out.println("\tFeatureSubsetStrategy: " + model.getFeatureSubsetStrategy());
+        System.out.println("\tImpurity: " + model.getImpurity());
+        System.out.println("\tBootstrap: " + model.getBootstrap());
+        System.out.println("\tSeed: " + model.getSeed());
         session.stop();
         System.exit(0);
 
